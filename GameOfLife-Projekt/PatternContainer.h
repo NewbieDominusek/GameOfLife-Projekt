@@ -7,6 +7,6 @@
 class PatternContainer
 {
 public:
-	std::vector<PatternTemplate> patterns;
-	PatternContainer();
+	std::vector<PatternTemplate> patterns; //wektor ze wzorkami
+	PatternContainer(); //konstruktor z ³adowanie wzorków z pliku
 };

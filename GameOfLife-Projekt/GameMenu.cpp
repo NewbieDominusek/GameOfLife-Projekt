@@ -2,7 +2,7 @@
 
 
 void GameMenu::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-	for (int i = 0; i < ileGuzikow; i++)
+	for (int i = 0; i < ILE_GUZIKOW; i++)
 	{
 		target.draw(scena[i], states);	//rysowanie wszystkich guzików po kolei
 	}
@@ -12,36 +12,36 @@ void GameMenu::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 int GameMenu::handleEvent(sf::Event event) {	//handlowanie eventów
 	int x, y;
 	switch (event.type) {
-	case sf::Event::MouseButtonPressed:
+	case sf::Event::MouseButtonPressed: //naciœniêcie przycisku myszki
 		x = event.mouseButton.x * origW / oknoW;	//skalujemy przekazan¹ pozycjê myszki do oryginalnych rozmiarów okna
 		y = event.mouseButton.y * origH / oknoH;
 		
-		for (int i = 0; i < ileGuzikow; i++) {
-			if (scena[i].mouseOnButton(x, y) == 1) { //pytamy siê guzików, czy to na nie klikniêto XD
-				if (i == 1 || i == 2) {
-					if (x < 270) x = 270;
+		for (int i = 0; i < ILE_GUZIKOW; i++) { //sprawdzamy który guzik naciœniêto
+			if (scena[i].mouseOnButton(x, y) == 1) {
+				if (i == 1 || i == 2) { //jeœli jest to slider to robimy inn¹ logikê
+					if (x < 270) x = 270; //ograniczamy wysuniêcie slidera
 					else if (x > 620) x = 620;
-					scena[2].moveBttn(x - 7, 2);
-					sliderVal = x - 270; //zakres 0 - 350
+					scena[2].moveBttn(x - 7, 2); //przesuwamy slider na miejsce klikniêcia
+					sliderVal = x - 270; //wartoœæ slidera (zakres 0 - 350)
 				}
-				return i;	
+				return i; //zwracamy indeks guzika
 			}
 		}
 		
-		return -1;	//jak nie to dajemy -1 i elo
+		return -1;	//jak nie naciœniêto na guzik to zwracamy -1
 		break;
 
-	case sf::Event::Resized:	//aktualizujemy zmienne z aktualnym rozmiarem okna
-		oknoW = event.size.width;
-		oknoH = event.size.height;
+	case sf::Event::Resized: //event zmiany rozmiaru okna
+		oknoW = event.size.width; //aktualizujemy zmienne z aktualnym rozmiarem okna
+		oknoH = event.size.height; //(potrzebne do skalowania pozycji myszki)
 		return 0;
 
-	case sf::Event::MouseWheelScrolled:
+	case sf::Event::MouseWheelScrolled: //event scrollowania
 		x = event.mouseWheelScroll.x * origW / oknoW;	//skalujemy przekazan¹ pozycjê myszki do oryginalnych rozmiarów okna
 		y = event.mouseWheelScroll.y * origH / oknoH;
 
-		for (int i = 0; i < ileGuzikow; i++) {
-			if (scena[i].mouseOnButton(x, y) == 1) return i; //pytamy siê guzików, czy to na nich scrollowano XD
+		for (int i = 0; i < ILE_GUZIKOW; i++) {
+			if (scena[i].mouseOnButton(x, y) == 1) return i; //sprawdzamy na którym guziku scrollowano
 		}
 
 	default:
@@ -49,13 +49,14 @@ int GameMenu::handleEvent(sf::Event event) {	//handlowanie eventów
 	}
 }
 
-GameMenu::GameMenu(int w, int h) {
-	int charSize = 20;
-	oknoW = w;
+GameMenu::GameMenu(int w, int h) { //stworzenie menu gry
+	int charSize = 20; //rozmiar czcionki
+	oknoW = w; //wartoœci do odpowiedniego skalowania
 	oknoH = h;
 	origW = w;
 	origH = h;
 
+	//stworzenie guzików
 	scena[0].setButton(100 ,20, 20, 5, "Main Menu", sf::Color::Red, charSize);	//pierwszy guzik
 	scena[1].setButton(350, 20, 270, 5, " ", sf::Color::Red, charSize);	//slider body
 	scena[2].setButton(15, 25, 300, 2, " ", sf::Color::Black, charSize);	//slider
@@ -67,11 +68,11 @@ GameMenu::GameMenu(int w, int h) {
 	scena[8].setButton(100, 20, 140, 5, "Reset", sf::Color::Red, charSize);	//RESET
 }
 
-int GameMenu::getSliderVal() {
-	return sliderVal; //pozycja slidera mo¿e byæ min 263, odejmuj¹c 260 minimalna wartoœæ to 3. Wyznacza czas szybkoœæ gry
+int GameMenu::getSliderVal() { //getter wartoœci slidera
+	return sliderVal;
 }
 
-void GameMenu::updateBttnText(int index, std::string tekst) {
-	if (index > ILE_GUZIKOW - 1) return;
+void GameMenu::updateBttnText(int index, std::string tekst) { //zmiana tekstu guzika
+	if (index > ILE_GUZIKOW - 1 || index < 0) return;
 	scena[index].changeText(tekst);
 }

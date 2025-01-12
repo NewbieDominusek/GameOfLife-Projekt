@@ -19,21 +19,21 @@ void Button::setButton(int w, int h, int X, int Y, std::string tekst, sf::Color 
 	height = h;
 	posX = X;
 	posY = Y;
-	if (!czcionka.loadFromFile("kenyan_coffee_rg.otf")) std::cout << "Chuj nie czcionka" << std::endl;  //skill issue
-	text.setFont(czcionka);
-	text.setString(tekst);
-	text.setPosition(sf::Vector2f(posX, posY));
-	text.setCharacterSize(charSize);
-	text.setFillColor(sf::Color::Black);
-	rectangle.setSize(sf::Vector2f(width, height));
-	rectangle.setPosition(sf::Vector2f(posX, posY));
-	rectangle.setFillColor(t³o);
+	if (!czcionka.loadFromFile("kenyan_coffee_rg.otf")) std::cout << "czcionka nie dziala" << std::endl;  //sprawdzamy za³adowanie czcionki (nawet jak nie za³aduje to progrma mo¿e dzia³aæ tylko nie ma tekstu)
+	text.setFont(czcionka); //ustawiamy czcionkê
+	text.setString(tekst); //ustawiamy tekst
+	text.setPosition(sf::Vector2f(posX, posY)); //ustawiamy pozycjê
+	text.setCharacterSize(charSize); //ustawiamy rozmiar znaków
+	text.setFillColor(sf::Color::Black); //ustawiamy kolor
+	rectangle.setSize(sf::Vector2f(width, height)); //rozmiar guzika
+	rectangle.setPosition(sf::Vector2f(posX, posY)); //pozycje guzika
+	rectangle.setFillColor(t³o); //kolor t³a
 }
 
-void Button::moveBttn(int x, int y) {
+void Button::moveBttn(int x, int y) { //przestaw guzik
 	rectangle.setPosition(sf::Vector2f(x, y));
 }
 
-void Button::changeText(std::string tekst) {
+void Button::changeText(std::string tekst) { //zmieñ tekst na guziku
 	text.setString(tekst);
 }

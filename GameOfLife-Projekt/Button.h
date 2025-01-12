@@ -4,7 +4,7 @@
 
 class Button : public sf::Drawable
 {
-	sf::Font czcionka;	//czcionka guzika (chuj nie dzia³a)
+	sf::Font czcionka;	//czcionka guzika
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const; //potrzebne aby mo¿na by³o bezpoœrednio przekazaæ obiekt do window.draw()
 	sf::Text text;	//tekst na guziku
 	int height, width, posX, posY;	//rozmiary i pozycja guzika

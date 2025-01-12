@@ -127,10 +127,10 @@ int main()
 						break;
 
 					case 5://PASTE IN (HOLOGRAM)
-						board.pasteInEnabled = !board.pasteInEnabled;
-						board.showHolo = false;
-						board.hologram(false);
-						board.updateKwadraty();
+						board.pasteInEnabled = !board.pasteInEnabled; //prze³¹cz wklejanie hologramu
+						board.showHolo = false; //wy³¹cz rysowanie hologramu (jesteœmy poza plansz¹)
+						board.hologram(false); //wywo³anie funkcji aby ustawi³a planszê w odpowiedni stan
+						board.updateKwadraty(); //odœwierzenie planszy
 						break;
 
 
@@ -274,29 +274,29 @@ int main()
 
 
 
-void resetMapa() {
+void resetMapa() { //wyzeruj ca³¹ mapê
 	for (int i = 0; i < width * height; i++) {
 		map[i] = 0; //przejdŸ po ca³ej mapie i wyzeruj
 	}
 }
 
-void resizePlansza(int oldH, int oldW, int h, int w) {
+void resizePlansza(int oldH, int oldW, int h, int w) { //zmiana rozmiaru g³ównej tablicy mapy
 	temp = (int*)calloc(w * h, sizeof(int)); //tymczasowa zmienna do przechowania oryginalnych wartoœci komórek (rozmiar docelowej tablicy)
-	int minW = (oldW >= w) ? w : oldW; //read below
+	int minW = (oldW >= w) ? w : oldW; //ustal które wymiary s¹ mniejsze aby nie wyjœæ poza rozmiar tablic
 	int minH = (oldH >= h) ? h : oldH; //ustal które wymiary s¹ mniejsze aby nie wyjœæ poza rozmiar tablic
-	for (int x = 0; x < minW; x++) {
+	for (int x = 0; x < minW; x++) { //[rzechodzimy po komórkach
 		for (int y = 0; y < minH; y++) {
-			temp[y * w + x] = map[y * oldW + x]; //przekopiuj komórki ze starej tablicy do nowej, jeœli nowa jest mniejsza to stara zostanie uciêta (nowa jest tymczasowa)
+			temp[y * w + x] = map[y * oldW + x]; //przekopiuj komórki tablicy g³ównej do tymczasowej, jeœli tymczasowa jest mniejsza to dane z g³ównej zostan¹ uciête
 		}
 	}
-	free(map); //zwolnij star¹ mapê
-	map = (int*)calloc(w * h, sizeof(int)); //zmien rozmiar mapy na docelowy
+	free(map); //usuñ g³ówn¹ tablicê
+	map = (int*)calloc(w * h, sizeof(int)); //i stwórz od nowa o nowych rozmiarach
 	for (int x = 0; x < w; x++) {
 		for (int y = 0; y < h; y++) {
-			map[y * w + x] = temp[y * w + x]; //wklej komórki z tablicy pomocniczej do nowej (ignoruj ostrze¿enie, kompilator skill issue)
+			map[y * w + x] = temp[y * w + x]; //wklej dane z tablicy tymczasowej do g³ównej
 		}
 	}
-	free(temp); //zwolnij pomocnicz¹
+	free(temp); //zwolnij tymczasow¹
 	height = h; //ustaw nowy rozmiar
 	width = w;
 }
@@ -321,32 +321,33 @@ void resizePlansza(int oldH, int oldW, int h, int w) {
 //2-3 s¹siadów prze¿ywa
 // >3 s¹siadów umiera
 //  3 s¹siadów o¿ywa
-void calculateMapa(int width, int height, int *map) {
+
+
+void calculateMapa(int width, int height, int *map) { //g³ówna funkcja gry obliczaj¹ca nastêpn¹ iteracjê planszy
 	int liveNeighbourCount = 0; //¿ywi s¹siedzi
 	int num = 0;	//numer komórki
-	for (int row = 0; row < height; row++) {
-		for (int col = 0; col < width; col++) { //przechodzimy po ca³ej mapie
+	for (int row = 0; row < height; row++) { //przechodzimy po ca³ej mapie
+		for (int col = 0; col < width; col++) { 
 
-			num = row * width + col; //oblicz numer komórki
-			if (map[num] > 3) map[num] = map[num] % 2;//usuwamy pomalowane komórki (fuck 'em)
+			num = row * width + col; //oblicz numer komórki z rzêdu i kolumny
+			if (map[num] > 3) map[num] = map[num] % 2; //usuwamy komórki pomalowane przez funkcjê hologramow¹
 			if (map[num] != 1) continue; //obliczamy tylko dla ¿ywych komórek, które nie by³y jeszcze liczone (optymalizacja)
-			int nextState = decideCellState(countNeighbours(row, col, width, height, map), map[num]); //liczymy œrodkow¹ komórkê
-			map[num] = nextState;
-			calculateNeighbours(row, col, width, height, map);
+			map[num] = decideCellState(countNeighbours(row, col, width, height, map), map[num]); //liczymy s¹siadów obecnej komórki
+			calculateNeighbours(row, col, width, height, map); //teraz obliczamy s¹siadów obecnej komórki (optymalizacja, obliczamy tylko ¿ywe komórki i ich s¹siadów, bo martwa komórka z martwymi s¹siadami nie mo¿e zmieniæ stanu)
 		}
 	}
 
-	for (int i = 0; i < height * width; i++) map[i] = map[i] % 2; //ustaw wartoœci na 0 lub 1 (2 i 3 oznaczaj¹, ¿e komórka by³a zmieniona)
+	for (int i = 0; i < height * width; i++) map[i] = map[i] % 2; //usuñ robocze wartoœci komórek (obliczona tablica ma zawierac tylko 1 lub 0)
 }
 
-int decideCellState(int neighbourCnt, int currentState) {
-	if (neighbourCnt < 2) return (currentState == 1) ? 2 : 0;			//ma za ma³o s¹siadów i jest ¿ywa, to ma um¿eæ
+int decideCellState(int neighbourCnt, int currentState) { //funkcja decyduj¹ca nastêpny stan komórki na podstawie liczby s¹siadów
+	if (neighbourCnt < 2) return (currentState == 1) ? 2 : 0;	//ma za ma³o s¹siadów i jest ¿ywa, to ma um¿eæ
 	else if (neighbourCnt > 3) return (currentState == 1) ? 2 : 0;	//ma za du¿o s¹siadów i jest ¿ywa to ma um¿eæ
 	else if (neighbourCnt == 3) return (currentState == 0) ? 3 : currentState;	//ma 3 s¹siadów i jest martwa to ma o¿yæ
-	else return currentState;
+	else return currentState; //stan ma pozostaæ niezmieniony
 }
 
-void calculateNeighbours(int row, int col, int width, int height, int* map) {
+void calculateNeighbours(int row, int col, int width, int height, int* map) { //oblicz s¹siadów podanej komórki
 	int above = (row == 0) ? height - 1 : row - 1, below = (row == height - 1) ? 0 : row + 1; //rzêdy na górze i dole, jeœli wychodzi poza mapê to zawijamy
 	int left = (col == 0) ? width - 1 : col - 1, right = (col == width - 1) ? 0 : col + 1; // to samo dla kolumn
 
@@ -362,16 +363,15 @@ void calculateNeighbours(int row, int col, int width, int height, int* map) {
 	};
 
 	for (int i = 0; i < 16; i += 2) { //przejdŸ po komórkach do sprawdzenia
-		int num = coords[i] * width + coords[i + 1];
-		if (map[num] > 3) map[num] = map[num] % 2; //usuwamy pomalowane komórki (fuck 'em)
-		if (map[num] != 0) continue;
-		int nextState = decideCellState(countNeighbours(coords[i], coords[i + 1], width, height, map), map[num]); //policz komórki do sprawdzenia
-		map[num] = nextState;
+		int num = coords[i] * width + coords[i + 1]; //numer komórki
+		if (map[num] > 3) map[num] = map[num] % 2; //usuwamy wartoœci robocze ustawione przez hologram
+		if (map[num] != 0) continue; //obliczamy tylko martwe komórki (¿ywe zostan¹ obliczone przez pêtlê g³ównej funkcji)
+		map[num] = decideCellState(countNeighbours(coords[i], coords[i + 1], width, height, map), map[num]); //oblicz nowy stan komórki
 	}
 		
 }
 
-int countNeighbours(int row, int col, int width, int height, int *map) {
+int countNeighbours(int row, int col, int width, int height, int *map) { //policz ¿ywych s¹siadów komórki
 	int count = 0;
 	int above = (row == 0) ? height - 1 : row - 1, below = (row == height - 1) ? 0 : row + 1; //rzêdy na górze i dole, jeœli wychodzi poza mapê to zawijamy
 	int left = (col == 0) ? width - 1 : col - 1, right = (col == width - 1) ? 0 : col + 1; // to samo dla kolumn
@@ -386,7 +386,7 @@ int countNeighbours(int row, int col, int width, int height, int *map) {
 	below* width + right,
 	};
 	for (int i = 0; i < 8; i++) {
-		if (map[numsToCheck[i]] > 3) map[numsToCheck[i]] = map[numsToCheck[i]] % 2;//usuwamy pomalowane komórki (fuck 'em)
+		if (map[numsToCheck[i]] > 3) map[numsToCheck[i]] = map[numsToCheck[i]] % 2;//usuwamy pomalowane komórki
 		if (map[numsToCheck[i]] == 1 || map[numsToCheck[i]] == 2) count++; //¿ywa albo nowa martwa (by³a ¿ywa)
 	}
 	return count;

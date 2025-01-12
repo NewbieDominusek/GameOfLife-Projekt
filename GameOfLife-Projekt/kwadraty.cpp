@@ -5,9 +5,9 @@ void TileMap::updateLinie() {
 	linie.setPrimitiveType(sf::Lines);
 	linie.resize((width + 1) * 2 + (height + 1) * 2);
 
-	int yOffset = (width + 1) * 2; //przesuniêcie do czêœci tablicy linii wyznaczonej dla linii poziomych
+	int yOffset = (width + 1) * 2; //od którego indeksu w tablicy s¹ dane linii poziomych
 	
-	for (int x = 0; x < yOffset; x += 2) {			//Pionowe linie, przechodzi po parach vertexów w tablicy, x skacze o 2 wartoœci, wiêc trzeba x potem podzieliæ przy przypisywaniu pozycji
+	for (int x = 0; x < yOffset; x += 2) {			//Pionowe linie, przechodzi po parach vertexów w tablicy, x skacze o 2 wartoœci, wiêc trzeba x potem podzieliæ przy przypisywaniu pozycji do rysowania
 		linie[x].position = sf::Vector2f(x / 2 * rozmiarX, 0 + marginTop);	//trzeba jeszcze uwzglêdniæ margines od góry
 		linie[x + 1].position = sf::Vector2f(x / 2 * rozmiarX, height * rozmiarY + marginTop);
 		linie[x].color = kolorLinii;
@@ -38,7 +38,7 @@ TileMap::TileMap(int* mapa, int w, int h, int wW, int wH) {
 	updateLinie();	//rysujemy linie
 }
 
-void TileMap::updateKwadraty() {	//aktualizacja kwadratów
+void TileMap::updateKwadraty() {	//aktualizacja planszy
 	int numer;
 	for (int x = 0; x < width; x++) {	//przechodzenie po tablicy
 		for (int y = 0; y < height; y++)
@@ -52,11 +52,8 @@ void TileMap::updateKwadraty() {	//aktualizacja kwadratów
 			trojkat[4].position = sf::Vector2f((x + 1) * rozmiarX, y * rozmiarY + marginTop);
 			trojkat[5].position = sf::Vector2f((x + 1) * rozmiarX, (y + 1) * rozmiarY + marginTop);
 
-
-			if (map[numer] <= 7) for(int i = 0; i <= 5; i++) trojkat[i].color = paletaKolor[map[numer]];	//kolorki :3 UwU (kolorek = wartoœæ w indeksie)
-
-			
-		}	//I am losing my mind
+			if (map[numer] <= 7) for(int i = 0; i <= 5; i++) trojkat[i].color = paletaKolor[map[numer]];	//ustawienie koloru trójk¹ta, kolor jest zale¿ny od wartoœci w odpowiadaj¹cym miejscu w tablicy g³ównej
+		}
 	}
 }
 
@@ -74,20 +71,20 @@ void TileMap::HandleEvent(sf::Event event) {	//handlowanie eventów
 	case sf::Event::MouseButtonPressed:	//naciœniêto myszkê
 		if (event.mouseButton.y > marginTop / origH * oknoH && event.mouseButton.y < oknoH - marginBottom / origH * oknoH) {	//sprawdzamy czy naciœniêto na planszê (sprawdzamy tylko y, bo x jest na ca³¹ szerokoœæ i skalujemy do rozmiaru okna)
 			x = event.mouseButton.x * origW / oknoW;	//skalujemy wartoœci x i y myszki tak, aby by³y w skali oryginalnego rozmiaru okna (jak zwiêkszymy okno to trzeba tê wartoœæ odpowiednio zmiejszyæ)
-			y = event.mouseButton.y * origH / oknoH;	//wtedy siê fajnie dzieli trust me bro pls bro
+			y = event.mouseButton.y * origH / oknoH;	//wtedy siê fajnie dzieli
 
 			x = x / rozmiarX;	//fajne dzielenie, jak mamy w pozycjê myszki zeskalowan¹ do oryginalnego rozmiaru okna, to mo¿emy podzieliæ przez oryginalny rozmiar komórek
 			y = (y - marginTop) / rozmiarY;	//aby efektywnie otrzymaæ na któr¹ komórkê nacisneliœmy (sfml automatycznie skaluje renderowanie do okna, wiêc nie mogê zmieniæ rozmiarX i rozmiarY bo grafika siê rozjedzie)
 
-			if (x > width || y > height) break;	//sprawdzamy czy wartoœci x i y s¹ w zakresie rozmiaru mapy
-			showHolo = true;
+			if (x > width || y > height) break;	//sprawdzamy czy wartoœci x i y s¹ w zakresie rozmiaru mapy, tak na wszelki wypadek
+			showHolo = true; //jeœli jesteœmy w zakresie tablicy to pozwalamy na rysowanie hologramu (nie chcemy go rysowaæ jak nie ma myszki na tablicy bo to brzydko wygl¹da)
 
-			numer = (int)y * width + (int)x; //obliczamy który index tentegesowaæ
+			numer = (int)y * width + (int)x; //obliczamy który index zmieniæ
 			if (event.mouseButton.button == sf::Mouse::Left) {
-				if (!pasteInEnabled) map[numer] = (map[numer] == 1) ? 0 : 1;	//zmieniamy wartoœæ w indeksie w zale¿noœci od przycisku myszki
+				if (!pasteInEnabled) map[numer] = (map[numer] == 1) ? 0 : 1; //jeœli nie jest w³¹czone wklejanie, to po prostu prze³¹czamy stan komórki
 				else {
-					hologram(true);
-					pasteInEnabled = false;
+					hologram(true); //jeœli w³¹czone by³o wklejanie, to wklejamy wzór
+					pasteInEnabled = false; //wy³¹czamy wklejanie
 				}
 			}
 			updateKwadraty();	//updateujemy rysowanie planszy
@@ -101,24 +98,24 @@ void TileMap::HandleEvent(sf::Event event) {	//handlowanie eventów
 		break;
 
 	case sf::Event::MouseMoved: //jeœli tylko ruszono myszk¹, robimy pocz¹tkowo to samo co przy naciœniêciu PPM
-		if (!pasteInEnabled) break;
-		if (event.mouseMove.y > marginTop / origH * oknoH && event.mouseMove.y < oknoH - marginBottom / origH * oknoH) {	//sprawdzamy czy naciœniêto na planszê (sprawdzamy tylko y, bo x jest na ca³¹ szerokoœæ i skalujemy do rozmiaru okna)
+		if (!pasteInEnabled) break; //jeœli wklejanie jest wy³¹czone to nie ma sensu iœæ dalej, bo ten kod obs³uguje wyœwietlanie hologramu wzorku
+		if (event.mouseMove.y > marginTop / origH * oknoH && event.mouseMove.y < oknoH - marginBottom / origH * oknoH) {	//sprawdzamy czy najechano na planszê (sprawdzamy tylko y, bo x jest na ca³¹ szerokoœæ i skalujemy do rozmiaru okna)
 			x = event.mouseMove.x * origW / oknoW;	//skalujemy wartoœci x i y myszki tak, aby by³y w skali oryginalnego rozmiaru okna (jak zwiêkszymy okno to trzeba tê wartoœæ odpowiednio zmiejszyæ)
-			y = event.mouseMove.y * origH / oknoH;	//wtedy siê fajnie dzieli trust me bro pls bro
+			y = event.mouseMove.y * origH / oknoH;	//wtedy siê fajnie dzieli
 
 			x = x / rozmiarX;	//fajne dzielenie, jak mamy w pozycjê myszki zeskalowan¹ do oryginalnego rozmiaru okna, to mo¿emy podzieliæ przez oryginalny rozmiar komórek
-			y = (y - marginTop) / rozmiarY;	//aby efektywnie otrzymaæ na któr¹ komórkê nacisneliœmy (sfml automatycznie skaluje renderowanie do okna, wiêc nie mogê zmieniæ rozmiarX i rozmiarY bo grafika siê rozjedzie)
+			y = (y - marginTop) / rozmiarY;	//aby efektywnie otrzymaæ na któr¹ komórkê najechona (sfml automatycznie skaluje renderowanie do okna, wiêc nie mogê zmieniæ rozmiarX i rozmiarY bo grafika siê rozjedzie)
 
 			if (x > width || y > height) break;	//sprawdzamy czy wartoœci x i y s¹ w zakresie rozmiaru mapy
-			holoX = x;
+			holoX = x; //ustawiamy koordynaty gdzie ma byæ wyœwietlany hologram
 			holoY = y;
-			showHolo = true;
+			showHolo = true; //pozwalamy na rysowanie hologramu
 
-			hologram(false);
+			hologram(false); //rysujemy hologram, ale go nie wstawiamy
 			updateKwadraty();	//updateujemy rysowanie planszy
 		}
-		else if (showHolo) {
-			showHolo = false;
+		else if (showHolo) { //jeœli jesteœmy poza map¹ i rysowanie hologramu by³o w³¹czone
+			showHolo = false; //wy³¹czamy rysowanie hologramu
 			hologram(false); //wywo³anie aby usun¹æ pozosta³oœæ hologramu
 			updateKwadraty();	//updateujemy rysowanie planszy
 		}
@@ -143,18 +140,19 @@ void TileMap::resizePlansza(int w, int h, int* nowaMapa) {
 void TileMap::hologram(bool clicked) {
 	for (int i = 0; i < height * width; i++) map[i] = map[i] % 2; //usuñ wczeœniejszy hologram
 
-	if (!showHolo) return; //sprawdŸ czy mamy wyœwietliæ hologram
+	if (!showHolo) return; //sprawdŸ czy mamy w ogóle wyœwietliæ hologram
 	if (holoWidth > width || holoHeight > height) return; //czy hologram mieœci siê w planszy
 	
+	//jeœli wszystko siê zgadza
 
 	for (int row = 0; row < holoHeight; row++) { //przechodzimy po hologramie
 		for (int col = 0; col < holoWidth; col++) {
 			int num = ((row + holoY >= height) ? row + holoY - height : row + holoY) * width + ((col + holoX >= width) ? col + holoX - width : col + holoX); //liczymy numer komórki (pozycja myszki + miejsce w hologramie) i uwzglêdniamy zawijanie
-			if (clicked) map[num] = holoData[row * holoWidth + col]; //jeœli klikniêto, to zamist hologramu po prostu narysuj wzór
+			if (clicked) map[num] = holoData[row * holoWidth + col]; //jeœli klikniêto, to zamiast hologramu wklej wzór do tablicy g³ównej
 
 			//inaczej rysuj hologram:
 			else if (map[num] == 0) map[num] = (holoData[row * holoWidth + col] == 0) ? 6 : 4;	//jeœli komórka jest martwa
-			else map[num] = (holoData[row * holoWidth + col] == 0) ? 5 : 7;					//jeœli jest ¿ywa
+			else map[num] = (holoData[row * holoWidth + col] == 0) ? 5 : 7;		//jeœli jest ¿ywa
 		}
 	}
 }

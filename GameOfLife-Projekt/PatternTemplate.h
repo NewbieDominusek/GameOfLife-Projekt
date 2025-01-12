@@ -5,9 +5,9 @@
 class PatternTemplate
 {
 public:
-	int height;
-	int width;
-	std::vector<int> data;
-	std::string name;
-	PatternTemplate(int patternW, int patternH, std::vector<int> patternData, std::string patternName);
+	int height; //wysokoœæ wzorku
+	int width; //szerokoœæ wzorku
+	std::vector<int> data; //dane wzorku
+	std::string name; //nazwa
+	PatternTemplate(int patternW, int patternH, std::vector<int> patternData, std::string patternName); //konstruktor
 };
