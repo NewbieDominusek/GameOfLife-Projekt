@@ -14,7 +14,7 @@ int Button::mouseOnButton(int x, int y) {
 	return 0;
 }
 
-void Button::setButton(int w, int h, int X, int Y, std::string tekst, sf::Color t³o, int charSize) {
+void Button::setButton(int w, int h, int X, int Y, std::string tekst, sf::Color tlo, int charSize) {
 	width = w;
 	height = h;
 	posX = X;
@@ -27,7 +27,7 @@ void Button::setButton(int w, int h, int X, int Y, std::string tekst, sf::Color 
 	text.setFillColor(sf::Color::Black); //ustawiamy kolor
 	rectangle.setSize(sf::Vector2f(width, height)); //rozmiar guzika
 	rectangle.setPosition(sf::Vector2f(posX, posY)); //pozycje guzika
-	rectangle.setFillColor(t³o); //kolor t³a
+	rectangle.setFillColor(tlo); //kolor t³a
 }
 
 void Button::moveBttn(int x, int y) { //przestaw guzik

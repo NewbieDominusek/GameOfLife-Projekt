@@ -14,7 +14,7 @@ class Button : public sf::Drawable
 
 public:
 	int mouseOnButton(int x, int y);	//Sprawdzamy czy myszka jest na guziku
-	void setButton(int w, int h, int X, int Y, std::string tekst, sf::Color t³o, int charSize); //ustawienie parmaetrów guzika
+	void setButton(int w, int h, int X, int Y, std::string tekst, sf::Color tlo, int charSize); //ustawienie parmaetrów guzika
 	void moveBttn(int x, int y); //zmien pozycjê guzika
 	void changeText(std::string tekst); //zmien tekst guzika
 	void changeColor(sf::Color nowyKolor);
