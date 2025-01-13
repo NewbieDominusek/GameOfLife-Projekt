@@ -25,13 +25,13 @@ void TileMap::updateLinie() {
 TileMap::TileMap(int* mapa, int w, int h, int wW, int wH) {
 	width = w;
 	height = h;
-	rozmiarX = wW / width;	//obliczenie rozmiarów komórek dla dowolnej tablicy
-	rozmiarY = (wH - marginTop - marginBottom) / height; //trzeba jeszcze uwzglêdniæ margines od góry i do³u
 	map = mapa;
 	oknoH = wH;
 	oknoW = wW;
 	origH = wH;
 	origW = wW;
+	rozmiarX = origW / width;	//obliczenie rozmiarów komórek dla dowolnej tablicy
+	rozmiarY = (origH - marginTop - marginBottom) / height; //trzeba jeszcze uwzglêdniæ margines od góry i do³u
 
 	kwadraty.setPrimitiveType(sf::Triangles);	//ustawiamy parametry tablicy z trójk¹tami rysuj¹cej komórki
 	kwadraty.resize(height * width * 6);

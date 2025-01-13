@@ -15,7 +15,7 @@ class GameMenu : public sf::Drawable
 public:
 	
 	int getSliderVal(); //przeka¿ wartoœæ slidera
-	GameMenu(int w, int h);	//konstruktor
+	GameMenu(int w, int h, int boardWidth, int boardHeight);	//konstruktor
 	int handleEvent(sf::Event event); //handlowanie eventów
 	void updateBttnText(int index, std::string tekst); //zaktualizuj tekst na guziku
 	void updateBttnColor(int index, sf::Color nowyKolor);

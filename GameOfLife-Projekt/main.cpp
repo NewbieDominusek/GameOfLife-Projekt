@@ -20,7 +20,7 @@ int countNeighbours(int row, int col, int width, int height, int* map);		//polic
 int decideCellState(int neighbourCnt, int currentState);		//wylicz nastêpny stan komórki
 void calculateNeighbours(int row, int col, int width, int height, int* map);	//oblicz s¹siednie komórki
 
-int height = 40, width = 40; //rozmiar szachownicy
+int height = 40, width = 64; //rozmiar szachownicy
 int* map = (int*)calloc(height * width, sizeof(int)); //tablica z komórkami
 int* temp; //pomocnicza do zmiany rozmiaru mapy
 bool zawijanie = true;
@@ -60,7 +60,7 @@ int main()
 	const sf::Color background = sf::Color(100, 100, 100, 150); //kolor t³a
 
 	MainMenu mainMenu(windowWidth, windowHeight);	//klasa menu g³ównego
-	GameMenu gameMenu(windowWidth, windowHeight);	//klasa z kontrolkami do gry
+	GameMenu gameMenu(windowWidth, windowHeight, width, height);	//klasa z kontrolkami do gry
 	
 	TileMap board(map, width, height, windowWidth, windowHeight); //klasa u¿ywana do renderowania komórek, renderowanie jest bazowane na tablicy map, nale¿y przekazaæ tablicê, rozmiar tablicy i rozmiar komórek do wyrenderowania
 

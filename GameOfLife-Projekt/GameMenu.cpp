@@ -49,7 +49,7 @@ int GameMenu::handleEvent(sf::Event event) {	//handlowanie eventów
 	}
 }
 
-GameMenu::GameMenu(int w, int h) { //stworzenie menu gry
+GameMenu::GameMenu(int w, int h, int boardWidth, int boardHeight) { //stworzenie menu gry
 	int charSize = 20; //rozmiar czcionki
 	oknoW = w; //wartoœci do odpowiedniego skalowania
 	oknoH = h;
@@ -63,8 +63,8 @@ GameMenu::GameMenu(int w, int h) { //stworzenie menu gry
 	scena[3].setButton(50,20 ,20 ,420 , "PLAY", sf::Color::Green, charSize);	//PLAY
 	scena[4].setButton(50, 20, 100, 420, "STOP", sf::Color::Red, charSize);	//STOP
 	scena[5].setButton(250, 20, 370, 420, "PASTE IN", sf::Color::Yellow, charSize);	//PASTE IN
-	scena[6].setButton(150, 20, 90, 445, "40", sf::Color::White, charSize);	//W
-	scena[7].setButton(150, 20, 400, 445, "40", sf::Color::Green, charSize); //H
+	scena[6].setButton(150, 20, 90, 445, std::to_string(boardWidth), sf::Color::White, charSize);	//W
+	scena[7].setButton(150, 20, 400, 445, std::to_string(boardHeight), sf::Color::Green, charSize); //H
 	scena[8].setButton(100, 20, 140, 5, "Reset", sf::Color::Red, charSize);	//RESET
 	scena[9].setButton(100, 20, 200, 420, "Zawijanie", sf::Color::Green, charSize);	//ZAWIJANIE
 }
