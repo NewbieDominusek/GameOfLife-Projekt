@@ -37,3 +37,7 @@ void Button::moveBttn(int x, int y) { //przestaw guzik
 void Button::changeText(std::string tekst) { //zmieñ tekst na guziku
 	text.setString(tekst);
 }
+
+void Button::changeColor(sf::Color nowyKolor) {
+	rectangle.setFillColor(nowyKolor);
+}

@@ -61,11 +61,12 @@ GameMenu::GameMenu(int w, int h) { //stworzenie menu gry
 	scena[1].setButton(350, 20, 270, 5, " ", sf::Color::Red, charSize);	//slider body
 	scena[2].setButton(15, 25, 300, 2, " ", sf::Color::Black, charSize);	//slider
 	scena[3].setButton(50,20 ,20 ,420 , "PLAY", sf::Color::Green, charSize);	//PLAY
-	scena[4].setButton(50, 20, 195, 420, "STOP", sf::Color::Red, charSize);	//STOP
+	scena[4].setButton(50, 20, 100, 420, "STOP", sf::Color::Red, charSize);	//STOP
 	scena[5].setButton(250, 20, 370, 420, "PASTE IN", sf::Color::Yellow, charSize);	//PASTE IN
 	scena[6].setButton(150, 20, 90, 445, "40", sf::Color::White, charSize);	//W
 	scena[7].setButton(150, 20, 400, 445, "40", sf::Color::Green, charSize); //H
 	scena[8].setButton(100, 20, 140, 5, "Reset", sf::Color::Red, charSize);	//RESET
+	scena[9].setButton(100, 20, 200, 420, "Zawijanie", sf::Color::Green, charSize);	//ZAWIJANIE
 }
 
 int GameMenu::getSliderVal() { //getter wartoœci slidera
@@ -75,4 +76,9 @@ int GameMenu::getSliderVal() { //getter wartoœci slidera
 void GameMenu::updateBttnText(int index, std::string tekst) { //zmiana tekstu guzika
 	if (index > ILE_GUZIKOW - 1 || index < 0) return;
 	scena[index].changeText(tekst);
+}
+
+void GameMenu::updateBttnColor(int index, sf::Color nowyKolor) {
+	if (index > ILE_GUZIKOW - 1 || index < 0) return;
+	scena[index].changeColor(nowyKolor);
 }

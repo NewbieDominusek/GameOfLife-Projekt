@@ -13,10 +13,11 @@ class TileMap : public sf::Drawable
 	int holoX, holoY; //ostatnia pozycja hologramu do narysowania
 	sf::VertexArray kwadraty;	//wektor z parami trójk¹tów do renderowania komórek
 	sf::VertexArray linie;	//wektor z liniami miêdzy kwadratami
-	sf::Color paletaKolor[8] = {sf::Color::Black, sf::Color::White, sf::Color::Black, sf::Color::White,sf::Color::Yellow, sf::Color::Blue, sf::Color::Blue , sf::Color::Yellow }; //tablica z kolorami komórki
+	sf::Color paletaKolor[10] = {sf::Color::Black, sf::Color::White, sf::Color::Black, sf::Color::White, sf::Color::Black, sf::Color::White,sf::Color::Yellow, sf::Color::Blue, sf::Color::Blue , sf::Color::Yellow }; //tablica z kolorami komórki
 
 
 public:
+	bool zawijanie = true;
 	bool pasteInEnabled = false; //czy jest aktywne wklejanie wzoru
 	bool showHolo = false; //czy ma byæ wyœwietlany wzór
 	std::vector<int> holoData; //dane o hologramie

@@ -52,7 +52,7 @@ void TileMap::updateKwadraty() {	//aktualizacja planszy
 			trojkat[4].position = sf::Vector2f((x + 1) * rozmiarX, y * rozmiarY + marginTop);
 			trojkat[5].position = sf::Vector2f((x + 1) * rozmiarX, (y + 1) * rozmiarY + marginTop);
 
-			if (map[numer] <= 7) for(int i = 0; i <= 5; i++) trojkat[i].color = paletaKolor[map[numer]];	//ustawienie koloru trójk¹ta, kolor jest zale¿ny od wartoœci w odpowiadaj¹cym miejscu w tablicy g³ównej
+			if (map[numer] < 10) for(int i = 0; i <= 5; i++) trojkat[i].color = paletaKolor[map[numer]];	//ustawienie koloru trójk¹ta, kolor jest zale¿ny od wartoœci w odpowiadaj¹cym miejscu w tablicy g³ównej
 		}
 	}
 }
@@ -138,7 +138,7 @@ void TileMap::resizePlansza(int w, int h, int* nowaMapa) {
 }
 
 void TileMap::hologram(bool clicked) {
-	for (int i = 0; i < height * width; i++) map[i] = map[i] % 2; //usuñ wczeœniejszy hologram
+	for (int i = 0; i < height * width; i++) map[i] = map[i] % 2; //ustaw planszê do stanu z danymi 0 lub 1
 
 	if (!showHolo) return; //sprawdŸ czy mamy w ogóle wyœwietliæ hologram
 	if (holoWidth > width || holoHeight > height) return; //czy hologram mieœci siê w planszy
@@ -147,12 +147,13 @@ void TileMap::hologram(bool clicked) {
 
 	for (int row = 0; row < holoHeight; row++) { //przechodzimy po hologramie
 		for (int col = 0; col < holoWidth; col++) {
+			if (!zawijanie && ((row + holoY >= height) || (col + holoX >= width))) continue; //jeœli wyst¹pi³o zawijanie a mamy je wy³¹czone, to pomiñ komórkê
 			int num = ((row + holoY >= height) ? row + holoY - height : row + holoY) * width + ((col + holoX >= width) ? col + holoX - width : col + holoX); //liczymy numer komórki (pozycja myszki + miejsce w hologramie) i uwzglêdniamy zawijanie
 			if (clicked) map[num] = holoData[row * holoWidth + col]; //jeœli klikniêto, to zamiast hologramu wklej wzór do tablicy g³ównej
 
 			//inaczej rysuj hologram:
-			else if (map[num] == 0) map[num] = (holoData[row * holoWidth + col] == 0) ? 6 : 4;	//jeœli komórka jest martwa
-			else map[num] = (holoData[row * holoWidth + col] == 0) ? 5 : 7;		//jeœli jest ¿ywa
+			else if (map[num] == 0) map[num] = (holoData[row * holoWidth + col] == 0) ? 8 : 6;	//jeœli komórka jest martwa
+			else map[num] = (holoData[row * holoWidth + col] == 0) ? 7 : 9;		//jeœli jest ¿ywa
 		}
 	}
 }

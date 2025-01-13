@@ -23,6 +23,7 @@ void calculateNeighbours(int row, int col, int width, int height, int* map);	//o
 int height = 40, width = 40; //rozmiar szachownicy
 int* map = (int*)calloc(height * width, sizeof(int)); //tablica z komórkami
 int* temp; //pomocnicza do zmiany rozmiaru mapy
+bool zawijanie = true;
 
 int main()
 {
@@ -76,6 +77,7 @@ int main()
 	sf::Clock zegar;	//obiekt z zegarem (do gry)
 	bool czyGraDziala = false;	//czy gra jest w³¹czona (obliczanie komórek)
 	int odstepCzasu = 200;		//odstêp miêdzy obliczeniami w milisekundach (default 200)
+
 
 	while (window.isOpen())
 	{
@@ -160,6 +162,12 @@ int main()
 						czyGraDziala = false; //wy³¹cz grê
 						resetMapa();
 						board.updateKwadraty();
+						break;
+
+					case 9: //RESET
+						zawijanie = !zawijanie;
+						board.zawijanie = zawijanie;
+						gameMenu.updateBttnColor(9, (zawijanie) ? sf::Color::Green : sf::Color::Red);
 						break;
 
 
@@ -308,14 +316,16 @@ void resizePlansza(int oldH, int oldW, int h, int w) { //zmiana rozmiaru g³ównej
 //parzyste liczby to martwa komórka, nieparzyste to ¿ywa
 //0 - martwa
 //1 - ¿ywa
-//2 - nowa martwa
-//3 - nowa ¿ywa
+//2 - sprawdzona martwa
+//3 - sprawdzona ¿ywa
+//4 - nowa martwa
+//5 - nowa ¿ywa
 // 
 // hologramy:
-//4 - martwa rysowana jako ¿ywa
-//5 - ¿ywa rysowana jako martwa
-//6 - martwa rysowana innym kolorem
-//7 - ¿ywa rysowana innym kolorem
+//6 - martwa rysowana jako ¿ywa
+//7 - ¿ywa rysowana jako martwa
+//8 - martwa rysowana innym kolorem
+//9 - ¿ywa rysowana innym kolorem
 
 // <2 s¹siadów umiera
 //2-3 s¹siadów prze¿ywa
@@ -330,7 +340,7 @@ void calculateMapa(int width, int height, int *map) { //g³ówna funkcja gry oblic
 		for (int col = 0; col < width; col++) { 
 
 			num = row * width + col; //oblicz numer komórki z rzêdu i kolumny
-			if (map[num] > 3) map[num] = map[num] % 2; //usuwamy komórki pomalowane przez funkcjê hologramow¹
+			if (map[num] > 5) map[num] = map[num] % 2; //usuwamy komórki pomalowane przez funkcjê hologramow¹
 			if (map[num] != 1) continue; //obliczamy tylko dla ¿ywych komórek, które nie by³y jeszcze liczone (optymalizacja)
 			map[num] = decideCellState(countNeighbours(row, col, width, height, map), map[num]); //liczymy s¹siadów obecnej komórki
 			calculateNeighbours(row, col, width, height, map); //teraz obliczamy s¹siadów obecnej komórki (optymalizacja, obliczamy tylko ¿ywe komórki i ich s¹siadów, bo martwa komórka z martwymi s¹siadami nie mo¿e zmieniæ stanu)
@@ -341,15 +351,17 @@ void calculateMapa(int width, int height, int *map) { //g³ówna funkcja gry oblic
 }
 
 int decideCellState(int neighbourCnt, int currentState) { //funkcja decyduj¹ca nastêpny stan komórki na podstawie liczby s¹siadów
-	if (neighbourCnt < 2) return (currentState == 1) ? 2 : 0;	//ma za ma³o s¹siadów i jest ¿ywa, to ma um¿eæ
-	else if (neighbourCnt > 3) return (currentState == 1) ? 2 : 0;	//ma za du¿o s¹siadów i jest ¿ywa to ma um¿eæ
-	else if (neighbourCnt == 3) return (currentState == 0) ? 3 : currentState;	//ma 3 s¹siadów i jest martwa to ma o¿yæ
-	else return currentState; //stan ma pozostaæ niezmieniony
+	if (neighbourCnt < 2) return (currentState == 1) ? 4 : 2;	//ma za ma³o s¹siadów i jest ¿ywa, to ma um¿eæ		(nowa martwa : sprawdzona martwa)
+	else if (neighbourCnt > 3) return (currentState == 1) ? 4 : 2;	//ma za du¿o s¹siadów i jest ¿ywa to ma um¿eæ	(nowa martwa : sprawdzona martwa)
+	else if (neighbourCnt == 3) return (currentState == 0) ? 5 : 3;	//ma 3 s¹siadów i jest martwa to ma o¿yæ		(nowa ¿ywa : sprawdzona ¿ywa)
+	else return (currentState == 0) ? 2 : 3; //stan ma pozostaæ niezmieniony		(sprawdzona martwa : sprawdzona ¿ywa)
 }
 
 void calculateNeighbours(int row, int col, int width, int height, int* map) { //oblicz s¹siadów podanej komórki
-	int above = (row == 0) ? height - 1 : row - 1, below = (row == height - 1) ? 0 : row + 1; //rzêdy na górze i dole, jeœli wychodzi poza mapê to zawijamy
-	int left = (col == 0) ? width - 1 : col - 1, right = (col == width - 1) ? 0 : col + 1; // to samo dla kolumn
+	int above =	(row == 0) ?			((zawijanie)? height - 1 : -1)	:	row - 1; //rz¹d nad komórk¹, jeœli rz¹d == 0 i mamy zawijaæ to bierzemy najni¿szy rz¹d, jeœli nie mamy zawijaæ to ustawiamy na -1
+	int below =	(row == height - 1)	?	((zawijanie) ? 0 : -1)			:	row + 1; //rz¹d pod komórk¹, jeœli rz¹d == height - 1 i mamy zawijaæ to bierzemy rz¹d == 0, jeœli nie mamy zawijaæ to ustawiamy na -1
+	int left =	(col == 0) ?			((zawijanie) ? width - 1 : -1)	:	col - 1; //kolumna na lewo od komórki, jeœli kolumna == 0 i mamy zawijaæ to bierzemy kolumna == width - 1, jeœli nie mamy zawijaæ to ustawiamy na -1
+	int right =	(col == width - 1) ?	((zawijanie) ? 0 : -1)			:	col + 1; //kolumna na prawo od komórki, jeœli kolumna == width - 1 i mamy zawijaæ to bierzemy kolumna == 0, jeœli nie mamy zawijaæ to ustawiamy na -1
 
 	int coords[16] = {	//koordynaty komórek do sprawdzenia
 		above, left,	//te komórki s¹ wokó³ obecnie sprawdzanej komórki g³ównej (œrodkowej)
@@ -363,9 +375,10 @@ void calculateNeighbours(int row, int col, int width, int height, int* map) { //
 	};
 
 	for (int i = 0; i < 16; i += 2) { //przejdŸ po komórkach do sprawdzenia
+		if (coords[i] < 0 || coords[i + 1] < 0) continue; //jeœli któraœ wartoœæ jest ujemna, to znaczy ¿e nie mamy zawijaæ i dana komórka wychodzi poza planszê, nale¿y pomin¹æ
 		int num = coords[i] * width + coords[i + 1]; //numer komórki
-		if (map[num] > 3) map[num] = map[num] % 2; //usuwamy wartoœci robocze ustawione przez hologram
-		if (map[num] != 0) continue; //obliczamy tylko martwe komórki (¿ywe zostan¹ obliczone przez pêtlê g³ównej funkcji)
+		if (map[num] > 5) map[num] = map[num] % 2; //usuwamy wartoœci robocze ustawione przez hologram
+		if (map[num] != 0) continue; //obliczamy tylko martwe niesprawdzone komórki (¿ywe zostan¹ obliczone przez pêtlê g³ównej funkcji)
 		map[num] = decideCellState(countNeighbours(coords[i], coords[i + 1], width, height, map), map[num]); //oblicz nowy stan komórki
 	}
 		
@@ -373,21 +386,25 @@ void calculateNeighbours(int row, int col, int width, int height, int* map) { //
 
 int countNeighbours(int row, int col, int width, int height, int *map) { //policz ¿ywych s¹siadów komórki
 	int count = 0;
-	int above = (row == 0) ? height - 1 : row - 1, below = (row == height - 1) ? 0 : row + 1; //rzêdy na górze i dole, jeœli wychodzi poza mapê to zawijamy
-	int left = (col == 0) ? width - 1 : col - 1, right = (col == width - 1) ? 0 : col + 1; // to samo dla kolumn
-	int numsToCheck[8] = { // numery komórek wokó³ naszej sprawdzanej
-	above * width + left,
-	above* width + col,
-	above* width + right,
-	row * width + left,
-	row* width + right,
-	below* width + left,
-	below* width + col,
-	below* width + right,
+	int above = (row == 0) ?			((zawijanie) ? height - 1 : -1)		:	row - 1; //rz¹d nad komórk¹, jeœli rz¹d == 0 i mamy zawijaæ to bierzemy najni¿szy rz¹d, jeœli nie mamy zawijaæ to ustawiamy na -1
+	int below = (row == height - 1) ?	((zawijanie) ? 0 : -1)				:	row + 1; //rz¹d pod komórk¹, jeœli rz¹d == height - 1 i mamy zawijaæ to bierzemy rz¹d == 0, jeœli nie mamy zawijaæ to ustawiamy na -1
+	int left =	(col == 0) ?			((zawijanie) ? width - 1 : -1)		:	col - 1; //kolumna na lewo od komórki, jeœli kolumna == 0 i mamy zawijaæ to bierzemy kolumna == width - 1, jeœli nie mamy zawijaæ to ustawiamy na -1
+	int right = (col == width - 1) ?	((zawijanie) ? 0 : -1)				:	col + 1; //kolumna na prawo od komórki, jeœli kolumna == width - 1 i mamy zawijaæ to bierzemy kolumna == 0, jeœli nie mamy zawijaæ to ustawiamy na -1
+	int coords[16] = {	//koordynaty komórek do sprawdzenia
+		above, left,	//te komórki s¹ wokó³ obecnie sprawdzanej komórki g³ównej (œrodkowej)
+		above, col,
+		above, right,
+		row, left,
+		row, right,
+		below, left,
+		below, col,
+		below, right
 	};
-	for (int i = 0; i < 8; i++) {
-		if (map[numsToCheck[i]] > 3) map[numsToCheck[i]] = map[numsToCheck[i]] % 2;//usuwamy pomalowane komórki
-		if (map[numsToCheck[i]] == 1 || map[numsToCheck[i]] == 2) count++; //¿ywa albo nowa martwa (by³a ¿ywa)
+	for (int i = 0; i < 16; i += 2) {
+		if (coords[i] < 0 || coords[i + 1] < 0) continue; //jeœli któraœ wartoœæ jest ujemna, to znaczy ¿e nie mamy zawijaæ i dana komórka wychodzi poza planszê, nale¿y pomin¹æ
+		int num = coords[i] * width + coords[i + 1]; //numer komórki
+		if (map[num] > 5) map[num] = map[num] % 2;//usuwamy pomalowane komórki
+		if (map[num] == 1 || map[num] == 3 || map[num] == 4) count++; //¿ywa / sprawdzona ¿ywa / nowa martwa (by³a ¿ywa)
 	}
 	return count;
 }

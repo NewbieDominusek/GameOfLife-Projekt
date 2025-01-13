@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Button.h"
 
-#define ILE_GUZIKOW 9 //iloœæ guzików w UI gry
+#define ILE_GUZIKOW 10 //iloœæ guzików w UI gry
 
 class GameMenu : public sf::Drawable
 {
@@ -18,5 +18,6 @@ public:
 	GameMenu(int w, int h);	//konstruktor
 	int handleEvent(sf::Event event); //handlowanie eventów
 	void updateBttnText(int index, std::string tekst); //zaktualizuj tekst na guziku
+	void updateBttnColor(int index, sf::Color nowyKolor);
 };
 
