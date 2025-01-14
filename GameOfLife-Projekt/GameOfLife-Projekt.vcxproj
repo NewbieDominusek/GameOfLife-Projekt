@@ -94,14 +94,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Dominik\Desktop\studia\rok2\cpp\GameOfLife-Projekt\GameOfLife-Projekt\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Dominik\Desktop\studia\rok2\cpp\GameOfLife-Projekt\GameOfLife-Projekt\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-main.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -125,6 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +140,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Mapa.cpp" />
     <ClCompile Include="PatternContainer.cpp" />
     <ClCompile Include="PatternTemplate.cpp" />
   </ItemGroup>
@@ -147,6 +149,7 @@
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="kwadraty.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Mapa.h" />
     <ClInclude Include="PatternContainer.h" />
     <ClInclude Include="PatternTemplate.h" />
   </ItemGroup>
