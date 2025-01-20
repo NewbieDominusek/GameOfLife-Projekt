@@ -125,6 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +140,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Mapa.cpp" />
     <ClCompile Include="PatternContainer.cpp" />
     <ClCompile Include="PatternTemplate.cpp" />
   </ItemGroup>
@@ -147,6 +149,7 @@
     <ClInclude Include="GameMenu.h" />
     <ClInclude Include="kwadraty.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Mapa.h" />
     <ClInclude Include="PatternContainer.h" />
     <ClInclude Include="PatternTemplate.h" />
   </ItemGroup>
