@@ -22,7 +22,7 @@ void Button::setButton(int w, int h, int X, int Y, std::string tekst, sf::Color 
 	if (!czcionka.loadFromFile("kenyan_coffee_rg.otf")) std::cout << "czcionka nie dziala" << std::endl;  //sprawdzamy za³adowanie czcionki (nawet jak nie za³aduje to progrma mo¿e dzia³aæ tylko nie ma tekstu)
 	text.setFont(czcionka); //ustawiamy czcionkê
 	text.setString(tekst); //ustawiamy tekst
-	text.setPosition(sf::Vector2f(posX, posY)); //ustawiamy pozycjê
+	text.setPosition(sf::Vector2f(posX, posY-3)); //ustawiamy pozycjê
 	text.setCharacterSize(charSize); //ustawiamy rozmiar znaków
 	text.setFillColor(sf::Color::Black); //ustawiamy kolor
 	rectangle.setSize(sf::Vector2f(width, height)); //rozmiar guzika
