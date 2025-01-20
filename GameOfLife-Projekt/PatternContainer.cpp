@@ -20,6 +20,7 @@ PatternContainer::PatternContainer() {
 	int tempW = 0;	//tymczasowa zmienna na szerokoœæ
 	int tempH = 0;	//tymczasowa zmienna na wysokoœæ
 	char tempC; //zmienna na znak
+	bool givenH = false, givenW = false, givenD = false;
 
 	if (plik.is_open()) {
 		while (plik.get(tempC)) { //przechodzenie po znakach jeden po jednym
@@ -30,9 +31,10 @@ PatternContainer::PatternContainer() {
 				while (plik.get(tempC)) { //przechodŸ po danych z wysokoœci¹
 					if (tempC == ':') continue;//ignoruj dwukropek
 					if (tempC == '.') break; //jak dojdziesz do kropki to zakoñcz
-					helper += tempC; //zbieraj cyfry wysokoœci
+					if (tempC >= '0' && tempC <= '9') helper += tempC; //zbieraj cyfry wysokoœci
 				}
 				tempH = std::stoi(helper); //konwertuj na liczbê i zapisz
+				if (tempH > 0) givenH = true;
 			}
 
 
@@ -42,9 +44,10 @@ PatternContainer::PatternContainer() {
 				while (plik.get(tempC)) { //przechodŸ po danych z szerokoœci¹
 					if (tempC == ':') continue;//ignoruj dwukropek
 					if (tempC == '.') break; //jak dojdziesz do kropki to zakoñcz
-					helper += tempC; //zbieraj cyfry szerokoœci
+					if (tempC >= '0' && tempC <= '9') helper += tempC; //zbieraj cyfry szerokoœci
 				}
 				tempW = std::stoi(helper); //konwertuj na liczbê i zapisz
+				if (tempW > 0) givenW = true;
 			}
 
 
@@ -57,6 +60,7 @@ PatternContainer::PatternContainer() {
 					else if (tempC == '1' || tempC == '0') tempData.push_back((tempC == '0')?0 :1 ); //jeœli jest inny znak ni¿ 1 albo 0 (np \n) to go ignoruj
 					//zbieraj dane o komórkach
 				}
+				if (tempData.size() > 0) givenD = true;
 			}
 
 
@@ -68,9 +72,12 @@ PatternContainer::PatternContainer() {
 					tempName += tempC;
 				}
 
-				if (tempData.size() == tempH * tempW) {
+				if (tempData.size() == tempH * tempW && givenH && givenD && givenH) {
 					patterns.push_back(PatternTemplate(tempW, tempH, tempData, tempName)); //dodajemy tylko jeœli rozmiar siê zgadza!!!
 				}
+				givenH = false;
+				givenD = false;
+				givenW = false;
 			}
 		}
 	}
