@@ -1,4 +1,4 @@
-#include "kwadraty.h"
+#include "Board.h"
 #include <SFML/Graphics.hpp>
 
 void TileMap::updateLinie() {
@@ -33,6 +33,7 @@ TileMap::TileMap(Mapa *cellMapPTR, int wW, int wH) {
 
 	kwadraty.setPrimitiveType(sf::Triangles);	//ustawiamy parametry tablicy z trójk¹tami rysuj¹cej komórki
 	kwadraty.resize(cellMap->height * cellMap->width * 6);
+	resizeKwadraty();
 	updateLinie();	//rysujemy linie
 }
 
@@ -43,13 +44,6 @@ void TileMap::updateKwadraty() {	//aktualizacja planszy
 		{
 			numer = y * cellMap->width + x;	//wartoœæ y po prostu przesuwa numer o d³ugoœæ tablicy razy y, wiêc otrzymujemy """2 wymiarow¹ tablicê"""
 			sf::Vertex* trojkat = &kwadraty[numer * 6];	//tablica sk³ada siê z rozmiar * 6, bo na ka¿dy kwadrat potrzebne jest 2 trójk¹ty, czyli 6 punktów. Tutaj robimy uchwyt do tych trójk¹tów w grupach po 6
-			trojkat[0].position = sf::Vector2f(x * rozmiarX, y * rozmiarY + marginTop);		//ustawiamy trójk¹ty z uwzglêdnieniem marginesu górnego
-			trojkat[1].position = sf::Vector2f((x + 1) * rozmiarX, y * rozmiarY + marginTop);
-			trojkat[2].position = sf::Vector2f(x * rozmiarX, (y + 1) * rozmiarY + marginTop);
-			trojkat[3].position = sf::Vector2f(x * rozmiarX, (y + 1) * rozmiarY + marginTop);
-			trojkat[4].position = sf::Vector2f((x + 1) * rozmiarX, y * rozmiarY + marginTop);
-			trojkat[5].position = sf::Vector2f((x + 1) * rozmiarX, (y + 1) * rozmiarY + marginTop);
-
 			if (cellMap->map[numer] < 10) for(int i = 0; i <= 5; i++) trojkat[i].color = paletaKolor[cellMap->map[numer]];	//ustawienie koloru trójk¹ta, kolor jest zale¿ny od wartoœci w odpowiadaj¹cym miejscu w tablicy g³ównej
 		}
 	}
@@ -124,12 +118,32 @@ void TileMap::HandleEvent(sf::Event event) {	//handlowanie eventów
 	}
 }
 
+void TileMap::resizeKwadraty() {
+	int numer;
+	for (int x = 0; x < cellMap->width; x++) {	//przechodzenie po tablicy
+		for (int y = 0; y < cellMap->height; y++)
+		{
+			numer = y * cellMap->width + x;	//wartoœæ y po prostu przesuwa numer o d³ugoœæ tablicy razy y, wiêc otrzymujemy """2 wymiarow¹ tablicê"""
+			sf::Vertex* trojkat = &kwadraty[numer * 6];	//tablica sk³ada siê z rozmiar * 6, bo na ka¿dy kwadrat potrzebne jest 2 trójk¹ty, czyli 6 punktów. Tutaj robimy uchwyt do tych trójk¹tów w grupach po 6
+			trojkat[0].position = sf::Vector2f(x * rozmiarX, y * rozmiarY + marginTop);		//ustawiamy trójk¹ty z uwzglêdnieniem marginesu górnego
+			trojkat[1].position = sf::Vector2f((x + 1) * rozmiarX, y * rozmiarY + marginTop);
+			trojkat[2].position = sf::Vector2f(x * rozmiarX, (y + 1) * rozmiarY + marginTop);
+			trojkat[3].position = sf::Vector2f(x * rozmiarX, (y + 1) * rozmiarY + marginTop);
+			trojkat[4].position = sf::Vector2f((x + 1) * rozmiarX, y * rozmiarY + marginTop);
+			trojkat[5].position = sf::Vector2f((x + 1) * rozmiarX, (y + 1) * rozmiarY + marginTop);
+
+			if (cellMap->map[numer] < 10) for (int i = 0; i <= 5; i++) trojkat[i].color = paletaKolor[cellMap->map[numer]];	//ustawienie koloru trójk¹ta, kolor jest zale¿ny od wartoœci w odpowiadaj¹cym miejscu w tablicy g³ównej
+		}
+	}
+}
+
 void TileMap::resizePlansza() {
 	rozmiarX = origW / cellMap->width;	//obliczenie rozmiarów komórek dla dowolnej tablicy
 	rozmiarY = (origH - marginTop - marginBottom) / cellMap->height; //trzeba jeszcze uwzglêdniæ margines od góry i do³u
 	kwadraty.resize(cellMap->height * cellMap->width * 6);
+
+	resizeKwadraty();
 	updateLinie();
-	updateKwadraty();
 }
 
 void TileMap::hologram(bool clicked) {

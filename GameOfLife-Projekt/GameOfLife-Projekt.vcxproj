@@ -137,7 +137,7 @@
   <ItemGroup>
     <ClCompile Include="GameInstance.cpp" />
     <ClCompile Include="GameMenu.cpp" />
-    <ClCompile Include="kwadraty.cpp" />
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -149,7 +149,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="GameInstance.h" />
     <ClInclude Include="GameMenu.h" />
-    <ClInclude Include="kwadraty.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Mapa.h" />
     <ClInclude Include="PatternContainer.h" />

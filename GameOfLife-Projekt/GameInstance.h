@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "kwadraty.h"
+#include "Board.h"
 #include "MainMenu.h"
 #include "GameMenu.h"
 #include "PatternContainer.h"

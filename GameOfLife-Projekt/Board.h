@@ -35,5 +35,6 @@ public:
 	void HandleEvent(sf::Event event);	//handlowanie eventów
 	void resizePlansza();  //aktualizacja ryzowanej planszy przy zmianie rozmiaru tablicy g³ównej
 	void hologram(bool clicked); //rysowanie/wklejanie hologramu (jeœli przekazane true to wklei wzór)
+	void resizeKwadraty(); // aktualizacja pozycji punktów rysuj¹cych kwadraty
 };
 
