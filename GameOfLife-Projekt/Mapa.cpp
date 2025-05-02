@@ -12,24 +12,18 @@ void Mapa::resizePlansza(int deltaWidth, int deltaHeight) { //zmiana rozmiaru g³
 	if (newWidth < 3) newWidth = 3;
 	if (newHeight < 3) newHeight = 3;
 	if (newWidth == width && newHeight == height) return;
-	int *temp = new int[newWidth * newHeight]; //tymczasowa tablica do przechowania oryginalnych wartoœci komórek (rozmiar docelowej tablicy)
-	for (int i = 0; i < newWidth * newHeight; i++) temp[i] = 0;
+	int* temp = new int[newWidth * newHeight] {0}; //tymczasowa tablica do przechowania oryginalnych wartoœci komórek (rozmiar docelowej tablicy)
+	//for (int i = 0; i < newWidth * newHeight; i++) temp[i] = 0;
 	int minW = (width >= newWidth) ? newWidth : width; //ustal które wymiary s¹ mniejsze aby nie wyjœæ poza rozmiar tablic
 	int minH = (height >= newHeight) ? newHeight : height; //ustal które wymiary s¹ mniejsze aby nie wyjœæ poza rozmiar tablic
-	for (int x = 0; x < minW; x++) { //[rzechodzimy po komórkach
+	for (int x = 0; x < minW; x++) { //przechodzimy po komórkach
 		for (int y = 0; y < minH; y++) {
 			temp[y * newWidth + x] = map[y * width + x]; //przekopiuj komórki tablicy g³ównej do tymczasowej, jeœli tymczasowa jest mniejsza to dane z g³ównej zostan¹ uciête
 		}
 	}
 
 	delete []map; //usuñ g³ówn¹ tablicê
-	map = new int[newWidth * newHeight]; //i stwórz od nowa o nowych rozmiarach
-	for (int x = 0; x < newWidth; x++) {
-		for (int y = 0; y < newHeight; y++) {
-			map[y * newWidth + x] = temp[y * newWidth + x]; //wklej dane z tablicy tymczasowej do g³ównej
-		}
-	}
-	delete []temp; //zwolnij tymczasow¹
+	map = temp;
 	height = newHeight; //ustaw nowy rozmiar
 	width = newWidth;
 }
@@ -66,7 +60,7 @@ void Mapa::calculateMapa() { //g³ówna funkcja gry obliczaj¹ca nastêpn¹ iteracjê 
 	for (int i = 0; i < height * width; i++) map[i] = map[i] % 2; //usuñ robocze wartoœci komórek (obliczona tablica ma zawierac tylko 1 lub 0)
 }
 
-int* Mapa::generateNeighbourNums(int cellNum){
+void Mapa::generateNeighbourNums(int cellNum, int *coords){
 	int row = cellNum / width;
 	int col = cellNum % width;
 
@@ -75,7 +69,6 @@ int* Mapa::generateNeighbourNums(int cellNum){
 	int left = (col == 0) ? ((zawijanie) ? width - 1 : -1) : col - 1; //kolumna na lewo od komórki, jeœli kolumna == 0 i mamy zawijaæ to bierzemy kolumna == width - 1, jeœli nie mamy zawijaæ to ustawiamy na -1
 	int right = (col == width - 1) ? ((zawijanie) ? 0 : -1) : col + 1; //kolumna na prawo od komórki, jeœli kolumna == width - 1 i mamy zawijaæ to bierzemy kolumna == 0, jeœli nie mamy zawijaæ to ustawiamy na -1
 
-	int* coords = new int[16]; //koordynaty komórek do sprawdzenia
 	coords[0] = above; coords[1] = left;
 	coords[2] = above; coords[3] = col;
 	coords[4] = above; coords[5] = right;
@@ -84,7 +77,6 @@ int* Mapa::generateNeighbourNums(int cellNum){
 	coords[10] = below;	coords[11] = left;
 	coords[12] = below;	coords[13] = col;
 	coords[14] = below;	coords[15] = right;
-	return coords;
 }
 
 int Mapa::decideCellState(int neighbourCnt, int currentState) { //funkcja decyduj¹ca nastêpny stan komórki na podstawie liczby s¹siadów
@@ -95,7 +87,8 @@ int Mapa::decideCellState(int neighbourCnt, int currentState) { //funkcja decydu
 }
 
 void Mapa::calculateNeighbours(int cellNum) { //oblicz s¹siadów podanej komórki
-	int* coords = generateNeighbourNums(cellNum);
+	int coords[16];
+	generateNeighbourNums(cellNum, coords);
 
 	for (int i = 0; i < 16; i += 2) { //przejdŸ po komórkach do sprawdzenia
 		if (coords[i] < 0 || coords[i + 1] < 0) continue; //jeœli któraœ wartoœæ jest ujemna, to znaczy ¿e nie mamy zawijaæ i dana komórka wychodzi poza planszê, nale¿y pomin¹æ
@@ -104,12 +97,12 @@ void Mapa::calculateNeighbours(int cellNum) { //oblicz s¹siadów podanej komórki
 		if (map[num] != 0) continue; //obliczamy tylko martwe niesprawdzone komórki (¿ywe zostan¹ obliczone przez pêtlê g³ównej funkcji)
 		map[num] = decideCellState(countNeighbours(num), map[num]); //oblicz nowy stan komórki
 	}
-	delete[]coords;
 }
 
 int Mapa::countNeighbours(int cellNum) { //policz ¿ywych s¹siadów komórki
 	int count = 0;
-	int* coords = generateNeighbourNums(cellNum);
+	int coords[16];
+	generateNeighbourNums(cellNum, coords);
 
 	for (int i = 0; i < 16; i += 2) {
 		if (coords[i] < 0 || coords[i + 1] < 0) continue; //jeœli któraœ wartoœæ jest ujemna, to znaczy ¿e nie mamy zawijaæ i dana komórka wychodzi poza planszê, nale¿y pomin¹æ

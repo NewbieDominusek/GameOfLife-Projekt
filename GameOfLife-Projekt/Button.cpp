@@ -19,7 +19,7 @@ void Button::setButton(int w, int h, int X, int Y, std::string tekst, sf::Color 
 	height = h;
 	posX = X;
 	posY = Y;
-	if (!czcionka.loadFromFile("kenyan_coffee_rg.otf")) std::cout << "czcionka nie dziala" << std::endl;  //sprawdzamy za³adowanie czcionki (nawet jak nie za³aduje to progrma mo¿e dzia³aæ tylko nie ma tekstu)
+	if (!czcionka.loadFromFile("Roboto.ttf")) std::cout << "czcionka nie dziala" << std::endl;  //sprawdzamy za³adowanie czcionki (nawet jak nie za³aduje to progrma mo¿e dzia³aæ tylko nie ma tekstu)
 	text.setFont(czcionka); //ustawiamy czcionkê
 	text.setString(tekst); //ustawiamy tekst
 	text.setPosition(sf::Vector2f(posX, posY-3)); //ustawiamy pozycjê

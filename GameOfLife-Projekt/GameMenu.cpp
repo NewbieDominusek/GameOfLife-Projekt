@@ -50,7 +50,7 @@ int GameMenu::handleEvent(sf::Event event) {	//handlowanie eventów
 }
 
 GameMenu::GameMenu(int w, int h, int boardWidth, int boardHeight) { //stworzenie menu gry
-	int charSize = 20; //rozmiar czcionki
+	int charSize = 18; //rozmiar czcionki
 	oknoW = w; //wartoœci do odpowiedniego skalowania
 	oknoH = h;
 	origW = w;
@@ -58,7 +58,7 @@ GameMenu::GameMenu(int w, int h, int boardWidth, int boardHeight) { //stworzenie
 
 	//stworzenie guzików
 	scena[0].setButton(100 ,20, 20, 5, "Main Menu", sf::Color::Red, charSize);	//pierwszy guzik
-	scena[1].setButton(350, 20, 270, 5, "           << Faster  --  Simulation Speed  --  Slower >>", sf::Color::Red, charSize);	//slider body
+	scena[1].setButton(350, 20, 270, 5, "<< Faster  -- Simulation Speed --  Slower >>", sf::Color::Red, charSize);	//slider body
 	scena[2].setButton(15, 25, 300, 2, " ", sf::Color::Black, charSize);	//slider
 	scena[3].setButton(50,20 ,20 ,420 , "PLAY", sf::Color::Green, charSize);	//PLAY
 	scena[4].setButton(50, 20, 100, 420, "STOP", sf::Color::Red, charSize);	//STOP
