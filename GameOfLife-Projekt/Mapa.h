@@ -5,7 +5,7 @@ class Mapa
 	void calculateNeighbours(int cellNum);	//oblicz s¹siednie komórki
 	int countNeighbours(int cellNum);		//policz ¿ywych s¹siadów komórki
 	
-	int* generateNeighbourNums(int cellNum);
+	void generateNeighbourNums(int cellNum, int *tab);
 
 public:
 	int* map;
